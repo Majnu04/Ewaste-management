@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gouri</title>
+    <style>
+        /* General Enhancements */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #21252a;
+            color: #333;
+        }
+
+        .dashboard-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #333;
+            color: #110606;
+            padding: 20px;
+            box-sizing: border-box;
+            height: 100vh;
+            position: fixed;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            color: #f5f6f6;
+            margin-bottom: 20px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar ul li {
+            margin: 10px 0;
+        }
+
+        .sidebar ul li a {
+            color: #d5d2d2;
+            text-decoration: none;
+            display: block;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .sidebar ul li a.active, .sidebar ul li a:hover {
+            background-color: #0097e6;
+            color: #fff;
+        }
+
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+            box-sizing: border-box;
+            background-color: #c4f2bf;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(139, 130, 130, 0.1);
+            flex: 1;
+        }
+
+        .content h2, .content h3 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .profile-pic {
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            margin-right: 20px;
+            border: 3px solid #0097e6;
+        }
+
+        .user-info div {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-info p {
+            margin: 5px 0;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        ul li {
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #a08c8c;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        form {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(158, 154, 154, 0.1);
+        }
+
+        input[type="text"], input[type="number"], input[type="date"] {
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: calc(100% - 22px);
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #0097e6;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            border-radius: 5px;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #007bb5;
+        }
+
+        /* Classifier Section */
+        #drop-zone {
+            border: 2px dashed #0097e6;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            text-align: center;
+            background-color: #e3f2fd;
+            border-radius: 5px;
+        }
+
+        #drop-zone:hover {
+            background-color: #d0e6f4;
+        }
+
+        #image-container img {
+            max-width: 100%;
+            margin: 15px 0;
+            border: 2px solid #0097e6;
+            border-radius: 5px;
+        }
+
+        #spinner {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #0097e6;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 15px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #prediction-container, #instructions-container {
+            margin-top: 15px;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        /* Tracking Section */
+        #tracking {
+            background-color: #f5f7f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+
+        #tracking-form {
+            margin-bottom: 15px;
+        }
+
+        #tracking-info {
+            font-size: 1rem;
+        }
+
+        /* E-Waste Education Section */
+        #education {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f0eeee;
+            border-radius: 5px;
+            border: 1px solid #1b1a1a;
+        }
+
+        #education h3 {
+            margin-top: 0;
+        }
+
+        #education .module {
+            margin-bottom: 20px;
+        }
+
+        #education .module h4 {
+            margin: 0;
+        }
+
+        #education .module p {
+            margin: 10px 0;
+        }
+
+        #education .quiz {
+            margin-top: 20px;
+        }
+
+        #education .quiz button {
+            margin-right: 10px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: relative;
+                height: auto;
+                text-align: center;
+            }
+
+            .content {
+                margin-left: 0;
+                padding: 10px;
+            }
+
+            .user-info {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .profile-pic {
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <h2>Dashboard</h2>
+            <ul>
+                <li><a href="#overview" class="nav-link" data-section="overview">Overview</a></li>
+                <li><a href="#contributions" class="nav-link" data-section="contributions">E-Waste Contributions</a></li>
+                <li><a href="#pickups" class="nav-link" data-section="pickups">Scheduled Pickups</a></li>
+                <li><a href="#classifier" class="nav-link" data-section="classifier">Item Classifier</a></li>
+                <li><a href="#tracking" class="nav-link" data-section="tracking">E-Waste Tracking</a></li>
+                <li><a href="#education" class="nav-link" data-section="education">E-Waste Education</a></li>
+            </ul>
+        </aside>
+
+        <main class="content">
+            <!-- Overview Section -->
+            <section id="overview">
+                <h2>Welcome, <span id="user-name">User</span></h2>
+                <div class="user-info">
+                    <img src="download.jpeg" alt="Profile Picture" class="profile-pic" id="profile-pic">
+                    <div>
+                        <p>Total E-Waste Contributions: <strong id="total-contributions">0 kg</strong></p>
+                        <p>Scheduled Pickups: <strong id="scheduled-pickups">0</strong></p>
+                    </div>
+                </div>
+
+                <!-- Graphs -->
+                <div class="graph-container">
+                    <h3>E-Waste Contributions Over Time</h3>
+                    <canvas id="contributions-graph" class="graph"></canvas>
+                    <h3>Scheduled Pickups Over Time</h3>
+                    <canvas id="pickups-graph" class="graph"></canvas>
+                </div>
+            </section>
+
+            <!-- Contributions Section -->
+            <section id="contributions">
+                <h3>Your E-Waste Contributions</h3>
+                <ul id="contributions-list">
+                    <!-- Contributions will be inserted here -->
+                </ul>
+                <form id="contributions-form">
+                    <input type="text" id="contribution-item" placeholder="E-Waste Item" required>
+                    <input type="number" id="contribution-weight" placeholder="Weight (kg)" required>
+                    <button type="submit">Add Contribution</button>
+                </form>
+            </section>
+
+            <!-- Pickups Section -->
+                <!-- Pickups Section -->
+            <section id="pickups">
+                <h3>Scheduled Pickups</h3>
+                <ul id="pickups-list">
+                    <!-- Pickups will be inserted here -->
+                </ul>
+                <form id="pickups-form">
+                    <input type="date" id="pickup-date" placeholder="Pickup Date" required>
+                    <input type="text" id="pickup-status" placeholder="Status" required>
+                    <button type="submit">Add Pickup</button>
+                </form>
+                <div id="pickup-notification" style="display: none; margin-top: 15px; padding: 10px; border-radius: 5px; background-color: #e3f2fd; color: #333; border: 1px solid #0097e6;"></div>
+
+            </section>
+
+            
+
+            <!-- Classifier Section -->
+            <section id="classifier">
+                <h3>Item Classifier</h3>
+                <div id="drop-zone">Click or Drag & Drop to Upload Image</div>
+                <input type="file" id="file-input" accept="image/*" style="display: none;">
+                <div id="image-container">
+                    <img id="uploaded-image" alt="Uploaded Image" style="display: none;">
+                </div>
+                <div id="spinner" style="display: none;"></div>
+                <div id="prediction-container"></div>
+                <div id="instructions-container">
+                    <p>Instructions: Upload an image of your e-waste to classify it.</p>
+                </div>
+            </section>
+
+            <!-- Tracking Section -->
+            <section id="tracking">
+                <h3>Track Your E-Waste</h3>
+                <form id="tracking-form">
+                    <input type="text" id="tracking-id" placeholder="Tracking ID" required>
+                    <button type="submit">Track</button>
+                </form>
+                <div id="tracking-info"></div>
+            </section>
+
+            <!-- E-Waste Education Section -->
+                <!-- E-Waste Education Section -->
+<section id="education">
+    <h3>E-Waste Education</h3>
+    <div class="module">
+        <h4>Module 1: What is E-Waste?</h4>
+        <p>E-waste refers to electronic products that are discarded after the end of their useful life. This includes old computers, televisions, smartphones, and other electronic devices. E-waste contains hazardous materials like lead, mercury, and cadmium, which can pose serious health risks if not managed properly. Understanding what constitutes e-waste is the first step toward effective management.</p>
+    </div>
+    <div class="module">
+        <h4>Module 2: E-Waste Statistics</h4>
+        <p>According to the Global E-Waste Monitor 2022:</p>
+        <ul>
+            <li><strong>57.4 million metric tons (Mt)</strong> of e-waste was generated globally in 2022.</li>
+            <li>Only <strong>17.4%</strong> of this e-waste was officially documented as recycled.</li>
+            <li>The average recycling rate for e-waste in high-income countries is about <strong>33%</strong>, compared to <strong>10%</strong> in low-income countries.</li>
+            <li>In 2022, <strong>10 million metric tons (Mt)</strong> of e-waste were estimated to be improperly disposed of, often ending up in landfills or informal recycling operations.</li>
+        </ul>
+    </div>
+    <div class="module">
+        <h4>Module 3: Proper Disposal Methods</h4>
+        <p>Proper disposal of e-waste involves several methods. Recycling is one of the most effective ways to manage e-waste, as it ensures that hazardous materials are handled safely and valuable materials are recovered. You can take your e-waste to designated recycling centers or participate in e-waste collection drives organized by local authorities or environmental organizations. Ensure that you follow local guidelines for e-waste disposal.</p>
+    </div>
+    <div class="module">
+        <h4>Module 4: The Impact of Irresponsible Disposal</h4>
+        <p>Improper disposal of e-waste can lead to significant environmental and health problems. When e-waste is disposed of in landfills, hazardous substances can leach into the soil and water, leading to contamination. Burning e-waste can release toxic fumes into the air. Irresponsible disposal also contributes to the loss of valuable resources and the illegal trade of e-waste to developing countries, where recycling practices may be unsafe.</p>
+    </div>
+    <div class="module">
+        <h4>Module 5: E-Waste Management Practices</h4>
+        <p>Effective e-waste management involves reducing, reusing, and recycling electronic products. Reduce your e-waste by extending the life of your devices through proper maintenance and repair. Reuse old electronics by donating them to charities or repurposing them for other uses. Finally, recycle e-waste responsibly by using certified e-waste recyclers who follow safe recycling practices. Educating yourself and others about these practices can help mitigate the impact of e-waste.</p>
+    </div>
+    <div class="module">
+        <h4>Module 6: E-Waste Regulations Overview</h4>
+        <p>Various regulations and policies govern the management and disposal of e-waste to ensure environmental protection and promote recycling. Key regulations include:</p>
+        <ul>
+            <li><strong>Basel Convention</strong>: An international treaty designed to reduce the movement of hazardous waste between nations, particularly from developed to less developed countries. It promotes the environmentally sound management of e-waste.</li>
+            <li><strong>EU Waste Electrical and Electronic Equipment Directive (WEEE)</strong>: This directive requires EU member states to implement systems for the collection, recycling, and recovery of e-waste. Producers are responsible for the costs of disposal and recycling.</li>
+            <li><strong>RoHS Directive</strong>: Restricts the use of certain hazardous substances in electrical and electronic equipment sold in the EU, including lead, mercury, and cadmium. It aims to reduce the environmental impact of e-waste.</li>
+            <li><strong>Extended Producer Responsibility (EPR)</>: Many countries implement EPR policies that require manufacturers to take responsibility for the entire lifecycle of their products, including take-back, recycling, and safe disposal.</li>
+            <li><strong>National Regulations</strong>: Many countries have their own regulations and policies concerning e-waste management. For example, the United States has state-level regulations and the Responsible Recycling (R2) certification for recycling practices.</li>
+        </ul>
+        <p>Understanding these regulations helps ensure compliance and supports global efforts to manage e-waste responsibly. Check local guidelines and regulations to know how e-waste is managed in your region.</p>
+    </div>
+</section>
+
+
+ 
+
+
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // JavaScript for Sidebar Navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                const section = document.querySelector(`#${this.dataset.section}`);
+                document.querySelectorAll('.content > section').forEach(sec => sec.style.display = 'none');
+                section.style.display = 'block';
+            });
+        });
+
+        // Functionality for Contributions
+        document.getElementById('contributions-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const item = document.getElementById('contribution-item').value;
+            const weight = document.getElementById('contribution-weight').value;
+            const contributionsList = document.getElementById('contributions-list');
+            const listItem = document.createElement('li');
+            listItem.textContent = `${item}: ${weight} kg`;
+            contributionsList.appendChild(listItem);
+            document.getElementById('contribution-item').value = '';
+            document.getElementById('contribution-weight').value = '';
+
+            // Update Graphs
+            updateGraphs();
+        });
+
+        // Functionality for Pickups
+// Functionality for Pickups
+document.getElementById('pickups-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const date = document.getElementById('pickup-date').value;
+    const status = document.getElementById('pickup-status').value;
+    const pickupsList = document.getElementById('pickups-list');
+    const listItem = document.createElement('li');
+    listItem.textContent = `Date: ${date}, Status: ${status}`;
+    pickupsList.appendChild(listItem);
+    document.getElementById('pickup-date').value = '';
+    document.getElementById('pickup-status').value = '';
+
+    // Display notification
+    const notification = document.getElementById('pickup-notification');
+    notification.textContent = `Pickup scheduled for ${date} has been added successfully. Status: ${status}`;
+    notification.style.display = 'block';
+
+    // Hide notification after 5 seconds
+    setTimeout(() => {
+        notification.style.display = 'none';
+    }, 5000);
+
+    // Update Graphs
+    updateGraphs();
+});
+
+
+
+        // Functionality for File Upload and Classification
+        document.getElementById('drop-zone').addEventListener('click', function () {
+            document.getElementById('file-input').click();
+        });
+
+        document.getElementById('file-input').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('uploaded-image').src = e.target.result;
+                    document.getElementById('uploaded-image').style.display = 'block';
+                    classifyImage(e.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function classifyImage(imageData) {
+            // Show spinner
+            document.getElementById('spinner').style.display = 'block';
+
+            // Simulate classification process
+            setTimeout(() => {
+                document.getElementById('spinner').style.display = 'none';
+                // Example prediction result
+                document.getElementById('prediction-container').innerHTML = 'Prediction: E-Waste Type';
+            }, 2000);
+        }
+
+        // Functionality for Tracking
+        document.getElementById('tracking-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const trackingId = document.getElementById('tracking-id').value;
+            const trackingInfo = document.getElementById('tracking-info');
+            // Simulate fetching tracking info
+            trackingInfo.innerHTML = `Tracking ID ${trackingId} status: Waiting State`;
+            document.getElementById('tracking-id').value = '';
+        });
+
+        // Function to start Quiz
+        function takeQuiz() {
+            alert('Starting the e-waste education quiz...');
+            // Implement quiz functionality here
+        }
+
+        // Initialize the dashboard
+        document.querySelector('.nav-link').click();  // Trigger click on first link to display initial section
+
+        // Chart.js for Graphs
+        function updateGraphs() {
+        // Contributions Graph
+        const ctxContributions = document.getElementById('contributions-graph').getContext('2d');
+        new Chart(ctxContributions, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                    label: 'E-Waste Contributions (kg)',
+                    data: [10, 15, 25, 20, 30, 40, 35, 50, 45, 60, 55, 70], // Replace with actual data
+                    borderColor: '#0097e6',
+                    backgroundColor: 'rgba(0, 151, 23, 0.2)',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#0097e6',
+                    pointBorderColor: 'black',
+                    pointRadius: 5,
+                    pointHoverRadius: 7
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Monthly E-Waste Contributions',
+                        font: {
+                            size: 18,
+                            weight: 'bold'
+                        }
+                    },
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return `Weight: ${context.raw} kg`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Month'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Weight (kg)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Pickups Graph
+        const ctxPickups = document.getElementById('pickups-graph').getContext('2d');
+        new Chart(ctxPickups, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                    label: 'Scheduled Pickups',
+                    data: [2, 3, 5, 4, 6, 8, 7, 10, 9, 12, 11, 14], // Replace with actual data
+                    backgroundColor: '#0097e6',
+                    borderColor: 'black',
+                    borderWidth: 1,
+                    hoverBackgroundColor: '#007bb5',
+                    hoverBorderColor: 'black'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Monthly Scheduled Pickups',
+                        font: {
+                            size: 18,
+                            weight: 'bold'
+                        }
+                    },
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return `Pickups: ${context.raw}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Month'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Pickups'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Initial graph rendering
+    updateGraphs();
+</script>
+        
+</body>
+</html>
